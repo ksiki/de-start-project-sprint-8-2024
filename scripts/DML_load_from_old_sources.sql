@@ -1,6 +1,5 @@
 begin;
 
-/* создание таблицы tmp_sources с данными из всех источников */
 drop table if exists tmp_sources;
 create temp table tmp_sources as 
 select  order_id,
@@ -91,7 +90,7 @@ select  t1.order_id,
 	from external_source.craft_products_orders t1
 	join external_source.customers t2 on t1.customer_id = t2.customer_id; 
 
-/* обновление существующих записей и добавление новых в dwh.d_craftsmans, dwh.d_products, dwh.d_customer */
+
 merge into dwh.d_craftsman d
 using (select distinct craftsman_name, craftsman_address, craftsman_birthday, craftsman_email from tmp_sources) t
 on d.craftsman_name = t.craftsman_name and d.craftsman_email = t.craftsman_email
@@ -136,7 +135,6 @@ join dwh.d_craftsman dc on dc.craftsman_name = src.craftsman_name and dc.craftsm
 join dwh.d_customer dcust on dcust.customer_name = src.customer_name and dcust.customer_email = src.customer_email 
 join dwh.d_product dp on dp.product_name = src.product_name and dp.product_description = src.product_description and dp.product_price = src.product_price;
 
-/* обновление существующих записей и добавление новых в dwh.f_order */
 merge into dwh.f_order f
 using tmp_sources_fact t
 on f.product_id = t.product_id and f.craftsman_id = t.craftsman_id and f.customer_id = t.customer_id and f.order_created_date = t.order_created_date 
