@@ -37,7 +37,7 @@ dwh_update_delta AS (
 	select 	
 		customer_id
 	from dwh_delta dd 
-	where customer_id is not null 
+	where exist_customer_id is not null 
 ),
 dwh_delta_insert_result as (
 	select 
